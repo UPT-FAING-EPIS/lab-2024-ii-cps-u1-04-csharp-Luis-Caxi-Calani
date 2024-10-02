@@ -32,7 +32,7 @@ jobs:
         run: cd Bank
 
       - name: Restore packages
-        run: dotnet restore 
+        run: dotnet restore Bank.sln
 
       - name: Run tests and collect coverage
         run: dotnet test --collect:"XPlat Code Coverage;Format=opencover" Bank.sln
