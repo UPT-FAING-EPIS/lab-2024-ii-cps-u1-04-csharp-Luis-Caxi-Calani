@@ -28,10 +28,10 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Change directory to solution folder
-        run: cd Bank                        # Cambia al directorio que contiene tu archivo .sln
+        working-directory: ./Bank            # Cambia al directorio Bank donde está el archivo Bank.sln
 
       - name: Restore packages
-        run: dotnet restore Bank.sln        # Restaura los paquetes de la solución
+        run: dotnet restore Bank.sln         # Restaura los paquetes de la solución
 
       - name: Run tests and collect coverage
         run: dotnet test --collect:"XPlat Code Coverage;Format=opencover" Bank.sln # Ejecuta las pruebas y recolecta cobertura
