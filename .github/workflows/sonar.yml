@@ -22,8 +22,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Change directory to solution folder
-        working-directory: ./Bank  
       - name: Restaurar los paquetes
         run: dotnet restore Bank.sln 
       - name: Ejecutar pruebas
