@@ -21,5 +21,34 @@ namespace Bank.Domain.Tests
             double actual = account.Balance;
             Assert.AreEqual(expected, actual, 0.001, "Account not debited correctly");
         }
+
+        [Test]
+        public void Credit_WithValidAmount_UpdatesBalance()
+        {
+            // Arrange
+            double beginningBalance = 11.99;
+            double creditAmount = 5.00;
+            double expected = 16.99;
+            BankAccount account = new BankAccount("Mr. Bryan Walton", beginningBalance);
+
+            // Act
+            account.Credit(creditAmount);
+
+            // Assert
+            double actual = account.Balance;
+            Assert.AreEqual(expected, actual, 0.001, "Account not credited correctly");
+        }
+
+        [Test]
+        public void Credit_WithNegativeAmount_ThrowsException()
+        {
+            // Arrange
+            double beginningBalance = 11.99;
+            double creditAmount = -5.00;
+            BankAccount account = new BankAccount("Mr. Bryan Walton", beginningBalance);
+
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => account.Credit(creditAmount), "Negative amount should throw an exception");
+        }
     }
 }
