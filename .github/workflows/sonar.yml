@@ -1,0 +1,47 @@
+
+name: Sonar Continuous Integration
+env:
+  DOTNET_VERSION: '8.0'                     # La versión de .NET que estás usando
+  SONAR_ORG: 'luis-caxi-calani'              # Nombre de tu organización en SonarCloud
+  SONAR_PROJECT: 'luis-caxi-calani_apibank'  # Clave del proyecto en SonarCloud
+
+on:
+  push:
+    branches: [ "main" ]                    # Ejecuta el análisis en cada push a la rama main
+  workflow_dispatch:                        # Permite ejecutar manualmente el workflow
+
+jobs:
+  sonarqube:
+    name: SonarQube Analysis
+    runs-on: ubuntu-latest                  # Ejecuta en un entorno de Ubuntu
+
+    steps:
+      - uses: actions/checkout@v4           # Realiza el checkout del código
+
+      - uses: actions/setup-java@v4         # Configura Java (requerido por SonarCloud)
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup .NET version             # Configura la versión de .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Change directory to solution folder
+        working-directory: ./Bank            # Cambia al directorio Bank donde está el archivo Bank.sln
+
+      - name: Restore packages
+        run: dotnet restore Bank.sln         # Restaura los paquetes de la solución
+
+      - name: Run tests and collect coverage
+        run: dotnet test --collect:"XPlat Code Coverage;Format=opencover" Bank.sln # Ejecuta las pruebas y recolecta cobertura
+
+      - name: Install SonarScanner
+        run: dotnet tool install -g dotnet-sonarscanner  # Instala SonarScanner para .NET
+
+      - name: Run SonarCloud scan
+        run: |
+          dotnet-sonarscanner begin /k:"${{ env.SONAR_PROJECT }}" /o:"${{ env.SONAR_ORG }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" /d:sonar.qualitygate.wait=true
+          dotnet build Bank.sln              # Compila el proyecto
+          dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"  # Finaliza el análisis
