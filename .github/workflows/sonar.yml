@@ -29,10 +29,10 @@ jobs:
 
       # Cambiar al directorio correcto donde está el archivo Bank.sln
       - name: Change directory to solution folder
-        run: cd lab-2024-ii-cps-u1-04-csharp-Luis-Caxi-Calani/Bank
+        run: cd Bank
 
       - name: Restore packages
-        run: dotnet restore Bank.sln
+        run: dotnet restore 
 
       - name: Run tests and collect coverage
         run: dotnet test --collect:"XPlat Code Coverage;Format=opencover" Bank.sln
@@ -45,4 +45,3 @@ jobs:
           dotnet-sonarscanner begin /k:"${{ env.SONAR_PROJECT }}" /o:"${{ env.SONAR_ORG }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="*/**/coverage.opencover.xml" /d:sonar.qualitygate.wait=true
           dotnet build Bank.sln
           dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-
